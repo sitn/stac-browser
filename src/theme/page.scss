@@ -7,7 +7,58 @@ body {
     margin-top: $header-margin;
 }
 
-#stac-browser {
+#stac-browser{
+    max-width: 100%;
+    padding:0;
+
+    .header-title{
+        background-color: map-get($theme-colors, 'primary');
+        color: white;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-left: 0.5*$block-margin;
+        padding-right: 0.5$block-margin;
+
+        .logo {
+            @if $logo == 'image' {
+                // Hide text
+                color: transparent;
+                font-size: 0;
+                // Show image
+                background-image: url($logo-image);
+                //background-color: map-get($theme-colors, 'primary');
+                //background-position: center;
+                background-repeat: no-repeat;
+                background-size: contain;
+                height: $logo-image-height;
+                flex-grow: 1;
+                margin: 0.8*$block-margin;
+            } @else if $logo == 'none' {
+                display: none;
+            }
+        }
+
+        .text a{
+            text-align: right;
+            padding: $block-margin;
+            padding-bottom:0;
+            padding-top:0;
+            font-size: 1.2rem;
+            color:white;
+            text-decoration: none;
+
+            @include media-breakpoint-down(sm) {
+                .text-full-name {
+                    font-size: 0;
+                }
+            }
+        }
+    }
+}
+
+#stac-browser-body {
     display: flex;
     flex-direction: column;
     max-width: 100%;
@@ -19,29 +70,14 @@ body {
         max-width: 75vw;
     }
 
-    > header {
+    > .body-header {
         padding-top: $block-margin;
 
         .lead {
             color: map-get($theme-colors, 'secondary');
         }
     }
-    .logo {
-        @if $logo == 'image' {
-            // Hide text
-            color: transparent;
-            font-size: 0;
-            // Show image
-            background-image: url($logo-image);
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: contain;
-            height: $logo-image-height;
-            margin-bottom: $block-margin;
-        } @else if $logo == 'none' {
-            display: none;
-        }
-    }
+    
     > main {
         flex: 1;
     }
@@ -265,7 +301,7 @@ $default-color: map-get($theme-colors, "secondary");
 $primary-color: map-get($theme-colors, "primary");
 
 // Multiselect related style
-#stac-browser {
+#stac-browser-body {
   
   .multiselect__tags:focus-within {
     border-color: #48cce1;
