@@ -1,0 +1,1 @@
+npm run build -- --catalogUrl="https://sitn.ne.ch/services/stac/catalog.json" --pathPrefix="/web/stac/"
