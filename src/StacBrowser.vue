@@ -1,22 +1,24 @@
 <template>
   <b-container id="stac-browser">
-    <Authentication v-if="showLogin" />
-    <ErrorAlert v-if="globalError" dismissible class="global-error" v-bind="globalError" @close="hideError" />
-    <Sidebar v-if="sidebar" />
-    <!-- Header -->
     <header>
-      <div class="logo">{{ displayCatalogTitle }}</div>
-      <StacHeader @enableSidebar="sidebar = true" />
+      <StacHeaderTitle />
     </header>
-    <!-- Content (Item / Catalog) -->
-    <router-view />
-    <footer>
-      <i18n tag="small" path="poweredBy" class="poweredby text-muted">
-        <template #link>
-          <a href="https://github.com/radiantearth/stac-browser" target="_blank">STAC Browser</a> {{ browserVersion }}
-        </template>
-      </i18n>
-    </footer>
+    <b-container id="stac-browser-body">
+      <Authentication v-if="showLogin" />
+      <ErrorAlert v-if="globalError" dismissible class="global-error" v-bind="globalError" @close="hideError" />
+      <Sidebar v-if="sidebar" />
+      <StacHeader @enableSidebar="sidebar = true" />
+
+      <!-- Content (Item / Catalog) -->
+      <router-view />
+      <footer>
+        <i18n tag="small" path="poweredBy" class="poweredby text-muted">
+          <template #link>
+            <a href="https://github.com/radiantearth/stac-browser" target="_blank">STAC Browser</a> {{ browserVersion }}
+          </template>
+        </i18n>
+      </footer>
+    </b-container>
   </b-container>
 </template>
 
@@ -36,6 +38,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
 import ErrorAlert from './components/ErrorAlert.vue';
+import StacHeaderTitle from './components/StacHeaderTitle.vue';
 import StacHeader from './components/StacHeader.vue';
 
 import { STAC } from 'stac-js';
@@ -105,6 +108,7 @@ export default {
     Authentication,
     ErrorAlert,
     Sidebar: () => import('./components/Sidebar.vue'),
+    StacHeaderTitle,
     StacHeader
   },
   props: {
@@ -124,7 +128,7 @@ export default {
       supportedLocalesFromVueX: 'supportedLocales',
       storeLocaleFromVueX: 'storeLocale'
     }),
-    ...mapGetters(['displayCatalogTitle', 'fromBrowserPath', 'isExternalUrl', 'root', 'supportsConformance', 'toBrowserPath']),
+    ...mapGetters(['fromBrowserPath', 'isExternalUrl', 'root', 'supportsConformance', 'toBrowserPath']),
     ...mapGetters('auth', ['showLogin']),
     browserVersion() {
       if (typeof STAC_BROWSER_VERSION !== 'undefined') {
