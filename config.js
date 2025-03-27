@@ -1,5 +1,5 @@
 module.exports = {
-    catalogUrl: 'https://sitn.ne.ch/web/stac/',
+    catalogUrl: 'https://sitn.ne.ch/services/stac/catalog.json',
     catalogTitle: "Catalogue STAC du SITN",
     allowExternalAccess: true, // Must be true if catalogUrl is not given
     allowedDomains: [],
@@ -9,7 +9,7 @@ module.exports = {
     fallbackLocale: "en",
     supportedLocales: [
         "de",
-        "ar",
+//        "ar",
 //      "de-CH",
         "es",
         "en",
@@ -20,9 +20,9 @@ module.exports = {
 //      "fr-CH",
         "it",
 //      "it-CH",
-        "ro",
+//      "ro",
         "ja",
-        "pt",
+//      "pt",
 //      "pt-BR"
         "id"
     ],
