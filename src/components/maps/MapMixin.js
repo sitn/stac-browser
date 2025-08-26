@@ -22,13 +22,16 @@ register(proj4); // required to support source reprojection
 
 export default {
   computed: {
-    ...mapState(['buildTileUrlTemplate', 'crossOriginMedia', 'displayGeoTiffByDefault', 'useTileLayerAsFallback']),
+    ...mapState(['buildTileUrlTemplate', 'crossOriginMedia', 'displayGeoTiffByDefault', 'displayPreview', 'displayOverview', 'getMapSourceOptions', 'useTileLayerAsFallback']),
     stacLayerOptions() {
       return {
         buildTileUrlTemplate: this.buildTileUrlTemplate,
         crossOriginMedia: this.crossOriginMedia,
+        displayPreview: this.displayPreview,
+        displayOverview: this.displayOverview,
         displayGeoTiffByDefault: this.displayGeoTiffByDefault,
         useTileLayerAsFallback: this.useTileLayerAsFallback,
+        getSourceOptions: this.getMapSourceOptions,
         httpRequestFn: async (url, responseType) => {
           const response = await stacRequest(this.$store, url, {responseType});
           return response.data;

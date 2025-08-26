@@ -82,7 +82,25 @@
         "boolean"
       ]
     },
+    "displayPreview": {
+      "type": [
+        "boolean"
+      ]
+    },
+    "displayOverview": {
+      "type": [
+        "boolean"
+      ]
+    },
     "buildTileUrlTemplate": {
+      "type": [
+        "null"
+      ],
+      "format": "function",
+      "noCLI": true,
+      "noEnv": true
+    },
+    "getMapSourceOptions": {
       "type": [
         "null"
       ],

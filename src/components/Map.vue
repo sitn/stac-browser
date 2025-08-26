@@ -138,7 +138,6 @@ export default {
         children: this.items,
         assets: this.assets || null,
         displayWebMapLink: true,
-        displayPreview: !this.items,
         disableMigration: true,
       });
       this.stacLayer = new StacLayer(options);
@@ -174,8 +173,7 @@ export default {
           if (objects.length > 0) {
             this.selectedItems = {
               target: this.$refs.target,
-              // Map from stac-js object back to STAC Browser STAC class
-              items: objects.map(obj => this.getStac(obj.getAbsoluteUrl()))
+              items: objects
             };
           }
           else {

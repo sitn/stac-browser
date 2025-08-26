@@ -22,8 +22,6 @@ The following ways to set config options are possible:
   - [apiCatalogPriority](#apicatalogpriority)
 - [Deployment](#deployment)
   - [historyMode](#historymode)
-    - [`history`](#history)
-    - [`hash`](#hash)
   - [pathPrefix](#pathprefix)
   - [stacProxyUrl](#stacproxyurl)
   - [redirectLegacyUrls](#redirectlegacyurls)
@@ -32,9 +30,6 @@ The following ways to set config options are possible:
   - [allowedDomains](#alloweddomains)
   - [crossOriginMedia](#crossoriginmedia)
   - [authConfig](#authconfig)
-    - [API Keys](#api-keys)
-    - [HTTP Basic](#http-basic)
-    - [OpenID Connect](#openid-connect)
 - [Internationalization and Localization](#internationalization-and-localization)
   - [locale](#locale)
   - [fallbackLocale](#fallbacklocale)
@@ -44,8 +39,11 @@ The following ways to set config options are possible:
 - [Mapping](#mapping)
   - [buildTileUrlTemplate](#buildtileurltemplate)
   - [useTileLayerAsFallback](#usetilelayerasfallback)
+  - [displayPreview](#displaypreview)
+  - [displayOverview](#displayoverview)
   - [displayGeoTiffByDefault](#displaygeotiffbydefault)
   - [crs](#crs)
+  - [getMapSourceOptions](#getmapsourceoptions)
 - [User Interface](#user-interface)
   - [itemsPerPage](#itemsperpage)
   - [maxItemsPerPage](#maxitemsperpage)
@@ -339,7 +337,7 @@ It allows rendering imagery such as (cloud-optimized) GeoTiffs through a tile se
 
 If the option `useTileLayerAsFallback` is set to `true`, the tile server is only used as a fallback.
 
-`buildTileUrlTemplate` is disabled by default (i.e. set to `null`) since v3.4.0.
+`buildTileUrlTemplate` is disabled by default (i.e. set to `null`) since v4.0.0.
 
 You can enable this option by providing a function with a single parameter that returns a tile server template url.
 The given function can optionally be async (i.e. return a Promise).
@@ -369,10 +367,23 @@ To clarify the behavior, please have a look at the following table:
 | true  | null     | client-side | none        |
 | false | null     | none        | none        |
 
+### displayPreview
+
+If set to `true` (default), displays preview images that a browser can display (e.g. PNG, JPEG) on the map as default visualization, i.e. from assets with any of the roles `thumbnail`, `overview`, or a link with relation type `preview`.
+The previews are often not covering the full extents and as such may be placed incorrectly on the map.
+
+If both `displayPreview` and `displayOverview` (see below) are enabled, STAC Browser prefers the overviews (COGs) over the previews (PNG, JPEG, ...).
+
+### displayOverview
+
+If set to `true` (default), allows to display COGs and, if `displayGeoTiffByDefault` is enabled, GeoTiffs on the map as default visualization, usually from an asset with role `overview` or `visual`.
+
 ### displayGeoTiffByDefault
 
 If set to `true`, the map also shows non-cloud-optimized GeoTiff files by default. Otherwise (`false`, default), it only shows COGs and you can only enforce showing GeoTiffs to be loaded with the "Show on map" button but they are never loaded automatically.
-Loading non-cloud-optimized GeoTiffs only works reliably for smaller files (< 1MB). It may also work for larger files, but it depends a lot on the underlying client hardware and software.
+Loading non-cloud-optimized GeoTiffs only works reliably for smaller files (< 1MB) with a certain structure. It may also work for larger files, but it depends a lot on the underlying client hardware and software.
+
+Related OpenLayers issue: [openlayers#16961](https://github.com/openlayers/openlayers/issues/16961)
 
 ### crs
 
@@ -388,6 +399,29 @@ Example for EPSG:2056:
 ```js
 {
   'EPSG:2056': 'PROJCS["CH1903+ / LV95",GEOGCS["CH1903+",DATUM["CH1903+",SPHEROID["Bessel 1841",6377397.155,299.1528128,AUTHORITY["EPSG","7004"]],AUTHORITY["EPSG","6150"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4150"]],PROJECTION["Hotine_Oblique_Mercator_Azimuth_Center"],PARAMETER["latitude_of_center",46.9524055555556],PARAMETER["longitude_of_center",7.43958333333333],PARAMETER["azimuth",90],PARAMETER["rectified_grid_angle",90],PARAMETER["scale_factor",1],PARAMETER["false_easting",2600000],PARAMETER["false_northing",1200000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","2056"]]'
+}
+```
+
+### getMapSourceOptions
+
+Corresponds to the ol-stac parameter `getSourceOptions`:
+
+> Optional function that can be used to configure the underlying sources. The function can do any additional work and return the completed options or a promise for the same. The function will be called with the current source options and the STAC Asset or Link. This can be useful for adding auth information such as an API token, either via query parameter or HTTP headers. Please be aware that sending HTTP headers may not be supported by all sources.
+
+The function that can be provided for getMapSourceOptions has the following signure:
+
+```js
+async getSourceOptions(type, options) => options
+```
+
+For example, the following code would set the `jsonp` option for the OpenLayers TileJSON layer:
+
+```js
+getSourceOptions: async (type, options) => {
+  if (type.name === 'TileJSON') {
+    options.jsonp = true;
+  }
+  return options;
 }
 ```
 
