@@ -1,6 +1,7 @@
 import URI from 'urijs';
 import removeMd from 'remove-markdown';
 import { stacPagination } from "./rels";
+import { browserProtocols } from 'stac-js/src/http.js';
 
 export const commonFileNames = ['catalog', 'collection', 'item'];
 
@@ -33,11 +34,6 @@ export const geotiffMediaTypes = [
   "image/tiff; application=geotiff",
   "image/vnd.stac.geotiff",
 ].concat(cogMediaTypes);
-
-export const browserProtocols = [
-  'http',
-  'https'
-];
 
 export const imageMediaTypes = browserImageTypes.concat(geotiffMediaTypes);
 export const mapMediaTypes = imageMediaTypes.concat([geojsonMediaType]);
@@ -271,7 +267,7 @@ export default class Utils {
     return pages;
   }
 
-  static addFiltersToLink(link, filters = {}, itemsPerPage = null) {
+  static addFiltersToLink(link, filters = {}, defaultLimit = null) {
     let isEmpty = value => {
       return (value === null
       || (typeof value === 'number' && !Number.isFinite(value))
@@ -286,8 +282,8 @@ export default class Utils {
       filters = Object.assign({}, filters);
     }
 
-    if (typeof filters.limit !== 'number' && typeof itemsPerPage === 'number') {
-      filters.limit = itemsPerPage;
+    if (typeof filters.limit !== 'number' && typeof defaultLimit === 'number') {
+      filters.limit = defaultLimit;
     }
 
     if (Utils.hasText(link.method) && link.method.toUpperCase() === 'POST') {
@@ -379,29 +375,6 @@ export default class Utils {
     }
   }
 
-  static canBrowserDisplayImage(img) {
-    if (typeof img.href !== 'string') {
-      return false;
-    }
-    let uri = URI(img.href);
-    let protocol = uri.protocol().toLowerCase();
-    if (protocol && !browserProtocols.includes(protocol)) {
-      return false;
-    }
-    else if (browserImageTypes.includes(img.type)) {
-      return true;
-    }
-    else if (browserImageTypes.includes('image/' + uri.suffix().toLowerCase())) {
-      return true;
-    }
-    else if (img.type) {
-      return false;
-    }
-    else {
-      return true; // If no img.type is given, try to load it anyway: https://github.com/radiantearth/stac-browser/issues/147
-    }
-  }
-
   // Gets the value at path of object.
   // Drop in replacement for lodash.get
   static getValueFromObjectUsingPath(object, path) {
@@ -447,16 +420,8 @@ export default class Utils {
     return searchterm[fn](term => target.includes(term));
   }
 
-  static createLink(href, rel) {
-    return { href, rel };
-  }
-
-  static supportsExtension(data, pattern) {
-    if (!Utils.isObject(data) || !Array.isArray(data['stac_extensions'])) {
-      return false;
-    }
-    let regexp = new RegExp('^' + pattern.replaceAll('*', '[^/]+') + '$');
-    return Boolean(data['stac_extensions'].find(uri => regexp.test(uri)));
+  static createLink(href, rel, title) {
+    return { href, rel, title };
   }
 
   /**

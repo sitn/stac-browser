@@ -108,7 +108,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['catalogUrl', 'catalogTitle', 'itemsPerPage']),
+    ...mapState(['catalogUrl', 'catalogTitle', 'searchResultsPerPage', 'itemsPerPage', 'collectionsPerPage']),
     ...mapGetters(['canSearchItems', 'canSearchCollections', 'getStac', 'root', 'collectionLink', 'parentLink', 'fromBrowserPath', 'toBrowserPath']),
     selectedCollectionCount() {
       return Utils.size(this.selectedCollections);
@@ -220,14 +220,6 @@ export default {
       this.parent = this.getStac(url);
       this.showPage();
     }
-    
-    // Fixes https://github.com/radiantearth/stac-browser/issues/428
-    this.$root.$on('uiLanguageChanged', () => {
-      this.$store.commit('setPageMetadata', {
-        title: this.$t('search.title'),
-        description: this.pageDescription
-      });
-    });
   },
   methods: {
     openItemSearch() {
@@ -253,7 +245,7 @@ export default {
       this.error = null;
       this.loading = true;
       try {
-        this.link = Utils.addFiltersToLink(link, this.filters, this.itemsPerPage);
+        this.link = Utils.addFiltersToLink(link, this.filters, this.searchResultsPerPage);
 
         let key = this.isCollectionSearch ? 'collections' : 'features';
         let response = await stacRequest(this.$store, this.link);
@@ -290,9 +282,11 @@ export default {
     },
     showPage(url) {
       this.$store.commit('showPage', {
-        title: this.$t('search.title'),
-        description: this.pageDescription,
-        url
+        url,
+        page: () => ({
+          title: this.$t('search.title'),
+          description: this.pageDescription,
+        })
       });
     }
   }

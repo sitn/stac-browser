@@ -3,11 +3,7 @@
 // Most of the variables below are Bootstrap variables, see https://getbootstrap.com/docs/4.0/getting-started/theming/ for details.
 // For simplicity we just provide some common options as default, but you can override all Bootstrap Sass variables.
 
-// Header / Logo, either image (see below), text (shows CATALOG_TITLE) or none
-$logo: 'image'; 
-// If 'image' has been chosen above
-$logo-image: 'media/logo_white.svg';
-$logo-image-height: 25px;
+$logo-image-height: 2rem;
 
 // Background and text default colors
 $body-bg: white;

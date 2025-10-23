@@ -7,6 +7,7 @@ export default {
     return {
       tab: null,
       shownOnMap: [],
+      selectedAssets: []
     };
   },
   computed: {
@@ -22,7 +23,7 @@ export default {
       }
       let assets = this.data.getAssets();
       if (!this.showThumbnailsAsAssets) {
-        assets = assets.filter(asset => !asset.isPreview());
+        assets = assets.filter(asset => !this.thumbnails.includes(asset));
       }
       return assets;
     },
@@ -40,9 +41,9 @@ export default {
         return [];
       }
       return this.data.getLinksWithOtherRels(stacBrowserSpecialHandling)
-        .filter(link => link.rel !== 'preview' || !Utils.canBrowserDisplayImage(link));
+        .filter(link => link.rel !== 'preview' || !link.canBrowserDisplayImage());
     },
-    selectedAssets() {
+    selectedReferences() {
       if (this.tab === 0) {
         return this.shownOnMap;
       }
@@ -58,7 +59,7 @@ export default {
       }
       else {
         this.tab = 0;
-        this.shownOnMap = [asset];
+        this.selectedAssets = [asset];
       }
       if (this.$refs.tabs) {
         Utils.scrollTo(this.$refs.tabs.$el);

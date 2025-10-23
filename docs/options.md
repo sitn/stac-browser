@@ -22,14 +22,17 @@ The following ways to set config options are possible:
   - [apiCatalogPriority](#apicatalogpriority)
 - [Deployment](#deployment)
   - [historyMode](#historymode)
+    - [`history`](#history)
+    - [`hash`](#hash)
   - [pathPrefix](#pathprefix)
-  - [stacProxyUrl](#stacproxyurl)
-  - [redirectLegacyUrls](#redirectlegacyurls)
 - [Security](#security)
   - [allowExternalAccess](#allowexternalaccess)
   - [allowedDomains](#alloweddomains)
   - [crossOriginMedia](#crossoriginmedia)
   - [authConfig](#authconfig)
+    - [API Keys](#api-keys)
+    - [HTTP Basic](#http-basic)
+    - [OpenID Connect](#openid-connect)
 - [Internationalization and Localization](#internationalization-and-localization)
   - [locale](#locale)
   - [fallbackLocale](#fallbacklocale)
@@ -45,8 +48,10 @@ The following ways to set config options are possible:
   - [crs](#crs)
   - [getMapSourceOptions](#getmapsourceoptions)
 - [User Interface](#user-interface)
+  - [searchResultsPerPage](#searchresultsperpage)
   - [itemsPerPage](#itemsperpage)
-  - [maxItemsPerPage](#maxitemsperpage)
+  - [collectionsPerPage](#collectionsperpage)
+  - [maxEntriesPerPage](#maxentriesperpage)
   - [cardViewMode](#cardviewmode)
   - [cardViewSort](#cardviewsort)
   - [showKeywordsInItemCards](#showkeywordsinitemcards)
@@ -76,7 +81,12 @@ If `catalogUrl` is empty or set to `null` STAC Browser switches to a mode where 
 
 The default title shown if no title can be read from the root STAC catalog.
 
-### apiCatalogPriority
+## catalogImage
+
+URL to an image to use as a logo with the title.
+Should be an image that browsers can display, e.g. PNG, JPEG, WebP, or SVG.
+
+## apiCatalogPriority
 
 For STAC APIs there are two potential sources for catalogs and collections:
 
@@ -135,34 +145,6 @@ npm run build -- --pathPrefix="/browser/"
 This will build STAC Browser in a way that it can be hosted at `https://example.com/browser` for example.
 Using this parameter for the dev server will make STAC Browser available at `http://localhost:8080/browser`.
 
-### stacProxyUrl
-
-**DEPRECATED!**
-
-Setting the `stacProxyUrl` allows users to modify the URLs contained in the catalog to point to another location.
-For instance, if you are serving a catalog on the local file system at `/home/user/catalog.json`, but want to serve
-the data out from a server located at `http://localhost:8888/`, you can use:
-
-```bash
-npm start -- --open --stacProxyUrl=/home/user http://localhost:8888
-```
-
-Notice the format of the value:
-
-- In CLI it is the original location and the proxy location separated by a space character, i.e. `{original} {proxy}` as in the example above.
-- In the config file it is a two-element array with the original location as first element and the proxy location as the second element. Set the option to `null` to disable it (default).
-
-In this example, any href contained in the STAC (including link or asset hrefs) will replace any occurrence of `/home/user/` with `http://localhost:8888`.
-
-This can also be helpful when proxying a STAC that does not have cors enabled;
-by using stacProxyUrl you can proxy the original STAC server with one that enables cors and be able to browse that catalog.
-
-### redirectLegacyUrls
-
-**DEPRECATED!**
-
-If you are updating from an old version of STAC Browser, you can set this option to `true` to redirect users from the old "unreadable" URLs to the new human-readable URLs.
-
 ## Security
 
 ### allowExternalAccess
@@ -173,8 +155,16 @@ Must be set to `true` if a `catalogUrl` is not given as otherwise you won't be a
 
 ### allowedDomains
 
-You can list additional domains (e.g. `example.com`) that private data is sent to, e.g. authentication data.
-This applies to query parameters and request headers.
+You can list additional domains or patterns that private data (query parameters and headers) is sent to, e.g. authentication data.
+
+The provided patterns can be one of the following:
+
+- A regular expression (i.e. a JavaScript `RegExp` object) that will be tested against the normalized absolute URL.
+  (Note: Can't be provided through CLI/ENV).
+- A domain (e.g. `example.com`): Matches for example.com and any subdomains (case insensitive).
+- A subdomain (e.g. `stac.example.com`): Matches for stac.example.com and any subdomains (case insensitive).
+
+Domain and subdomain patterns ignore schema, userinfo, port, path, query and fragment.
 
 ### crossOriginMedia
 
@@ -427,17 +417,35 @@ getSourceOptions: async (type, options) => {
 
 ## User Interface
 
+### searchResultsPerPage
+
+The number of items requested and shown per page by default for search results, i.e. global item search and collection search.
+If set to `null`, the server's default will be used.
+
+This applies to the following requests:
+
+- `GET /search`
+- `GET /collections` (in Collection Search only - see `collectionsPerPage` for other cases)
+
 ### itemsPerPage
 
-The number of items requested and shown per page by default. Only applies to APIs that support the `limit` query parameter.
+The number of items requested and shown per page by default for item lists, except for item search.
+If set to `null`, the server's default will be used.
 
-This is applied to the following requests:
+This applies to the following requests:
 
-- `GET /collection/*/items`
-- `GET /search`
-- Only in Collection Search: `GET /collections` (i.e. **not** applied to the default collection list request)
+- `GET /collection/{collectionId}/items`
 
-### maxItemsPerPage
+### collectionsPerPage
+
+The number of collections requested and shown per page by default for collection lists, except for collection search.
+If set to `null`, the server's default will be used.
+
+This applies to the following requests:
+
+- `GET /collections` (for collection lists while browsing the API/catalog - see `searchResultsPerPage` for collection search)
+
+### maxEntriesPerPage
 
 The maximum number of items per page that a user can request through the `limit` query parameter (`1000` by default).
 

@@ -41,12 +41,12 @@
     "password": "Passwort",
     "required": "Anmeldung erforderlich",
     "schemeTypes": {
-      "apiKey": "API-Schlüssel",
       "http": "HTTP {scheme}",
-      "oauth2": "OAuth 2",
-      "openIdConnect": "OpenID Connect",
       "s3": "S3",
-      "signedUrl": "Signierte URL"
+      "signedUrl": "Signierte URL",
+      "oauth2": "OAuth 2",
+      "apiKey": "API-Schlüssel",
+      "openIdConnect": "OpenID Connect"
     },
     "title": "Anmelden",
     "unauthorized": "Sie haben keine Berechtigung um diese Daten abzurufen. Bitte melden Sie sich an.",
@@ -77,7 +77,7 @@
   "deprecation": {
     "fallbackTitle": "Anzeigen",
     "latestVersion": "Neueste Version:",
-    "otherVersionsNotice": "Dies ist *nicht* abgekündigt, aber andere Versionen sind verfügbar:",
+    "otherVersionsNotice": "Diese {type}-Version ist *nicht* abgekündigt, aber andere Versionen sind verfügbar:",
     "otherVersionsTitle": "Andere Versionen verfügbar",
     "outdatedTitle": "Veraltet",
     "predecessorVersion": "Vorherige Version:",
@@ -108,6 +108,7 @@
     "noExternalAccess": "Der Zugriff auf externe Kataloge ist nicht erlaubt!",
     "notFound": "Die angeforderte Seite existiert nicht. @:errors.contactProvider",
     "serverError": "Auf dem Server ist ein Problem aufgetreten. @:errors.contactProvider",
+    "title": "Fehler",
     "unauthorized": "Der Anfrage fehlen die Anmeldedaten, bspw. ein API-Schlüssel. Bitte geben Sie Ihre Anmeldedaten an und versuchen Sie es erneut."
   },
   "featureExperimental": "Diese Funktion ist noch experimentell und kann unerwartete Ergebnisse verursachen!",
@@ -153,9 +154,9 @@
   "map": "Karte",
   "mapping": {
     "attribution": {
-      "collapseLabel": "✕",
+      "label": "i",
       "description": "Namensnennungen",
-      "label": "i"
+      "collapseLabel": "✕"
     },
     "bboxSelect": {
       "add": "Klicke auf die Karte, um eine Box für die räumliche Ausdehnung zu erstellen.",
@@ -164,10 +165,10 @@
     "close": "Schließen",
     "fit": "Ansicht an räumliche Ausdehnung anpassen",
     "layers": {
-      "base": "Grundkarten",
-      "footprint": "Räumliche Ausdehnung",
       "title": "Kartenebenen",
-      "unnamed": "Unbenannt #{id}"
+      "base": "Grundkarten",
+      "unnamed": "Unbenannt #{id}",
+      "footprint": "Räumliche Ausdehnung"
     },
     "location": {
       "description": "Springe zu deiner Position"
@@ -272,11 +273,6 @@
     "placeholder": "Suchen...",
     "selectCollections": "Wähle Kataloge...",
     "selectForItemSearch": "Markiere für Elementsuche",
-    "sortOptions": {
-      "datetime": "Datum und Zeit",
-      "id": "Identifikationsnummer",
-      "title": "Titel"
-    },
     "spatialExtent": "Räumliche Ausdehnung",
     "tabs": {
       "collections": "Kataloge durchsuchen",
@@ -324,8 +320,8 @@
       "message": "{title} ist verfügbar unter {url}",
       "sharePageWithOthers": "Teile die Adresse dieser Seite:",
       "title": "Teilen",
-      "withOthers": "Teile diese Seite mit anderen",
-      "x": "X (Twitter)"
+      "x": "X (Twitter)",
+      "withOthers": "Teile diese Seite mit anderen"
     },
     "stacExtension": "STAC-Erweiterung",
     "stacVersion": "STAC-Version",

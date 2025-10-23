@@ -132,7 +132,6 @@
   "in": "في {catalog}",
   "index": {
     "api": "واجهة برمجة التطبيقات",
-    "catalog": "الكتالوج",
     "load": "تحميل",
     "selectStacIndex": "... أو اختر واحدًا من {stacIndex}:",
     "specifyCatalog": "يرجى تحديد كتالوج STAC أو API...",
@@ -147,25 +146,18 @@
     "noneAvailableForCollection": "لا توجد عناصر متاحة لهذه المجموعة.",
     "showFilter": "إظهار عوامل التصفية"
   },
-  "leaflet": {
-    "close": "إغلاق",
-    "noFeatureProperties": "لا توجد بيانات إضافية متاحة لهذه الميزة.",
-    "stayLayer": {
-      "error": "عذرًا، فشل إضافة البيانات إلى الخريطة."
-    },
-    "zoom": {
-      "in": {
-        "description": "تكبير",
-        "label": "+"
-      },
-      "out": {
-        "description": "تصغير",
-        "label": "-"
-      }
-    }
-  },
   "loading": "جارٍ التحميل...",
   "map": "الخريطة",
+  "mapping": {
+    "attribution": {},
+    "bboxSelect": {},
+    "layers": {},
+    "location": {},
+    "zoom": {
+      "in": {},
+      "out": {}
+    }
+  },
   "messageForSchemaError": "{message}، للمخطط {schemaPath}",
   "metadata": {
     "general": "عام",
@@ -253,11 +245,6 @@
     "placeholder": "بحث...",
     "selectCollections": "حدد مجموعة واحدة أو أكثر...",
     "selectForItemSearch": "حدد للبحث عن عنصر",
-    "sortOptions": {
-      "datetime": "التاريخ والوقت",
-      "id": "المعرّف",
-      "title": "العنوان"
-    },
     "spatialExtent": "النطاق المكاني",
     "tabs": {
       "collections": "البحث عن المجموعات",
