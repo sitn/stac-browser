@@ -19,10 +19,6 @@ export default {
   // Geoparquet, // not ready yet
   // Potree,
   Protomaps,
-<<<<<<< HEAD
-};
-=======
   SitnTileViewer,
   SitnPointCloudViewer
 };
->>>>>>> dfb8266b (Open in sitn potree buttons)
