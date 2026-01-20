@@ -53,5 +53,6 @@ module.exports = {
     socialSharing: ['email', 'bsky', 'mastodon'],
     preprocessSTAC: null,
     authConfig: null,
-    crs: {}
+    crs: {},
+    footerLinks: null
 };

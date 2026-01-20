@@ -1,7 +1,7 @@
 <template>
   <main class="search d-flex flex-column">
     <Loading v-if="!parent" stretch />
-    <b-alert v-else-if="!searchLink" variant="danger" show>{{ $t('search.notSupported') }}</b-alert>
+    <ErrorAlert v-else-if="!searchLink" :description="$t('search.notSupported')" />
     <b-row v-else>
       <b-col class="left">
         <b-tabs v-model="activeSearch">
@@ -21,13 +21,13 @@
       </b-col>
       <b-col class="right">
         <Loading v-if="loading" fill top />
-        <b-alert v-else-if="error" variant="error" show>{{ error }}</b-alert>
+        <ErrorAlert v-else-if="error" :description="error" :id="errorId" />
         <b-alert v-else-if="data === null" variant="info" show>{{ $t('search.modifyCriteria') }}</b-alert>
         <b-alert v-else-if="results.length === 0 && noFurtherItems" variant="info" show>{{ $t('search.noFurtherItemsFound') }}</b-alert>
         <b-alert v-else-if="results.length === 0" variant="warning" show>{{ $t('search.noItemsFound') }}</b-alert>
         <template v-else>
-          <div id="search-map" v-if="itemCollection">
-            <Map :stac="parent" :items="itemCollection" onfocusOnly popover />
+          <div id="search-map" v-if="resultCollection">
+            <Map :stac="parent" :children="resultCollection" onfocusOnly popover />
           </div>
           <Catalogs
             v-if="isCollectionSearch" :catalogs="results" collectionsOnly
@@ -67,10 +67,11 @@ import { mapGetters, mapState } from "vuex";
 import Utils from '../utils';
 import SearchFilter from '../components/SearchFilter.vue';
 import Loading from '../components/Loading.vue';
-import { getDisplayTitle, createSTAC, ItemCollection } from '../models/stac';
+import ErrorAlert from '../components/ErrorAlert.vue';
+import { getDisplayTitle, createSTAC, CollectionCollection, ItemCollection } from '../models/stac';
 import { STAC } from 'stac-js';
 import { BIconCheckSquare, BIconSquare, BTabs, BTab } from 'bootstrap-vue';
-import { processSTAC, stacRequest } from '../store/utils';
+import { getErrorCode, getErrorMessage, processSTAC, stacRequest } from '../store/utils';
 
 export default {
   name: "Search",
@@ -80,6 +81,7 @@ export default {
     BTab,
     BTabs,
     Catalogs: () => import('../components/Catalogs.vue'),
+    ErrorAlert,
     Loading,
     Items: () => import('../components/Items.vue'),
     Map: () => import('../components/Map.vue'),
@@ -95,12 +97,11 @@ export default {
   data() {
     return {
       parent: null,
-
       error: null,
+      errorId: null,
       link: null,
       loading: false,
       data: null,
-
       itemFilters: {},
       collectionFilters: {},
       activeSearch: 0,
@@ -128,15 +129,20 @@ export default {
     itemSearch() {
       return this.canSearchItems && this.parent && this.parent.getSearchLink();
     },
-    itemCollection() {
+    resultCollection() {
       if (this.isCollectionSearch) {
-        return null; // wait for stac-js to convert bboxes to geojson
+        return new CollectionCollection({
+          collections: this.results,
+          links: []
+        });
       }
-      return new ItemCollection({
-        type: 'FeatureCollection',
-        features: this.results,
-        links: []
-      });
+      else {
+        return new ItemCollection({
+          type: 'FeatureCollection',
+          features: this.results,
+          links: []
+        });
+      }
     },
     results() {
       if (Utils.size(this.data) === 0) {
@@ -243,6 +249,7 @@ export default {
     },
     async loadResults(link) {
       this.error = null;
+      this.errorId = null;
       this.loading = true;
       try {
         this.link = Utils.addFiltersToLink(link, this.filters, this.searchResultsPerPage);
@@ -261,7 +268,8 @@ export default {
         }
       } catch (error) {
         this.data = {};
-        this.error = error.message;
+        this.error = getErrorMessage(error);
+        this.errorId = getErrorCode(error);
       } finally {
         this.loading = false;
       }
@@ -305,6 +313,10 @@ export default {
   }
 }
 
+#search-map {
+  margin-bottom: $block-margin;
+}
+
 #stac-browser .search {
   .selected-collections-action {
     position: fixed;
@@ -323,28 +335,6 @@ export default {
     min-width: 250px;
     flex-basis: 60%;
     position: relative !important;
-  }
-  .items, .catalogs {
-    .card-columns {
-      @include media-breakpoint-only(sm) {
-        column-count: 1;
-      }
-      @include media-breakpoint-only(md) {
-        column-count: 2;
-      }
-      @include media-breakpoint-only(lg) {
-        column-count: 2;
-      }
-      @include media-breakpoint-only(xl) {
-        column-count: 2;
-      }
-      @include media-breakpoint-only(xxl) {
-        column-count: 3;
-      }
-      @include media-breakpoint-up(xxxl) {
-        column-count: 4;
-      }
-    }
   }
 }
 </style>

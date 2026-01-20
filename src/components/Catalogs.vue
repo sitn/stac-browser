@@ -3,10 +3,10 @@
     <header>
       <h2 class="title mr-2">{{ title }}</h2>
       <b-badge v-if="catalogCount !== null" pill variant="secondary" class="mr-4">{{ catalogCount }}</b-badge>
-      <ViewButtons class="mr-2" v-model="view" />
-      <SortButtons v-if="isComplete && catalogs.length > 1" v-model="sort" />
+      <ViewButtons v-if="!hideControls" class="mr-2" v-model="view" />
+      <SortButtons v-if="!hideControls && isComplete && catalogs.length > 1" v-model="sort" />
     </header>
-    <section v-if="isComplete && catalogs.length > 1" class="catalog-filter mb-2">
+    <section v-if="!hideControls && isComplete && catalogs.length > 1" class="catalog-filter mb-2">
       <SearchBox v-model="searchTerm" :placeholder="filterPlaceholder" />
       <multiselect
         v-if="allKeywords.length > 0" v-model="selectedKeywords" multiple :options="allKeywords"
@@ -21,13 +21,13 @@
     <b-alert v-if="hasSearchCritera && catalogView.length === 0" variant="warning" class="mt-2" show>{{ $t('catalogs.noMatches') }}</b-alert>
     <section class="list">
       <Loading v-if="loading" fill top />
-      <component :is="cardsComponent" v-bind="cardsComponentProps">
+      <div v-if="catalogView.length > 0" :class="cardsContainerClass">
         <Catalog v-for="catalog in catalogView" :catalog="catalog" :key="catalog.href">
           <template #footer="{data}">
             <slot name="catalogFooter" :data="data" />
           </template>
         </Catalog>
-      </component>
+      </div>
     </section>
     <Pagination v-if="showPagination" class="mb-3" :pagination="pagination" @paginate="paginate" />
     <b-button v-else-if="hasMore" @click="loadMore" variant="primary" v-b-visible.300="loadMore">{{ $t('catalogs.loadMore') }}</b-button>
@@ -40,7 +40,7 @@ import Catalog from './Catalog.vue';
 import Loading from './Loading.vue';
 import { getDisplayTitle } from '../models/stac';
 import { STAC } from 'stac-js';
-import ViewMixin from './ViewMixin';
+import ViewButtons from './ViewButtons.vue';
 import Utils from '../utils';
 
 export default {
@@ -51,11 +51,9 @@ export default {
     Pagination: () => import('./Pagination.vue'),
     SearchBox: () => import('./SearchBox.vue'),
     SortButtons: () => import('./SortButtons.vue'),
-    Multiselect: () => import('vue-multiselect')
+    Multiselect: () => import('vue-multiselect'),
+    ViewButtons
   },
-  mixins: [
-    ViewMixin
-  ],
   props: {
     catalogs: {
       type: Array,
@@ -64,6 +62,14 @@ export default {
     collectionsOnly: {
       type: Boolean,
       required: false
+    },
+    enforceCards: {
+      type: Boolean,
+      default: false
+    },
+    hideControls: {
+      type: Boolean,
+      default: false
     },
     loading: {
       type: Boolean,
@@ -187,10 +193,27 @@ export default {
         }
       }
       return keywords.sort();
+    },
+    cardsContainerClass() {
+      return this.view === 'list' ? 'card-list' : 'card-grid';
+    },
+    view: {
+      get() {
+        if (this.enforceCards) {
+          return 'cards';
+        }
+        return this.$store.state.cardViewMode;
+      },
+      async set(cardViewMode) {
+        if (this.enforceCards) {
+          return;
+        }
+        await this.$store.dispatch('config', { cardViewMode });
+      }
     }
   },
   created() {
-    this.sort = this.cardViewSort;
+    this.sort = Utils.convertHumanizedSortOrder(this.cardViewSort);
   },
   methods: {
     loadMore(visible = true) {

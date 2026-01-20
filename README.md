@@ -8,7 +8,7 @@ implemented as a single page application (SPA) for ease of development and to
 limit the overall number of catalog reads necessary when browsing (as catalogs
 may be nested and do not necessarily contain references to their parents).
 
-Version: **3.3.5** (supports all STAC versions between 0.6.0 and 1.1.0)
+Version: **4.0.0** (supports all STAC versions between 0.6.0 and 1.1.0)
 
 This package has also been published to npm as [`@radiantearth/stac-browser`](https://www.npmjs.com/package/@radiantearth/stac-browser).
 
@@ -16,7 +16,7 @@ It's not officially supported, but you may also be able to use it for
 certain _OGC API - Records_ and _OGC API - Features_ compliant servers.
 
 **Please note that STAC Browser is currently with limited funding for both maintenance, bug fixes and improvements. This means issues and PRs may be addressed very slowly.
-If you care about STAC Browser and have some funds to support the future of STAC Browser, please contact matthias@mohr.ws**
+If you care about STAC Browser and have some funds to support the future of STAC Browser, please contact <matthias@mohr.ws>**
 
 **Table of Contents:**
 
@@ -60,26 +60,31 @@ npm install
 
 By default, STAC Browser will let you browse all catalogs on STAC Index.
 
-To browse only your own static STAC catalog or STAC API, set the `catalogUrl` CLI parameter when running the dev server.
+To browse only your own static STAC catalog or STAC API, set the [`catalogUrl`](docs/options.md#catalogurl) config parameter when running the dev server.
 In this example we point to EarthSearch (`https://earth-search.aws.element84.com/v1/`):
 
 ```bash
-npm start -- --open --catalogUrl="https://earth-search.aws.element84.com/v1/"
+# Linux / MacOS
+SB_catalogUrl="https://earth-search.aws.element84.com/v1/" npm start
+# Windows (PowerShell)
+$env:SB_catalogUrl="https://earth-search.aws.element84.com/v1/"; npm start
 ```
+
+This will start the development server on <http://localhost:8080>, which you can then open in your preferred browser.
 
 To open a local file on your system, see the chapter [Using Local Files](docs/local_files.md).
 
 If you'd like to publish the STAC Browser instance use the following command:
 
 ```bash
-npm run build -- --catalogUrl="https://earth-search.aws.element84.com/v1/"
+# Linux / MacOS
+SB_catalogUrl="https://earth-search.aws.element84.com/v1/" npm run build
+# Windows (PowerShell)
+$env:SB_catalogUrl="https://earth-search.aws.element84.com/v1/"; npm run build
 ```
 
 This will only work on the root path of your domain though. If you'd like to publish in a sub-folder,
 you can use the [`pathPrefix`](docs/options.md#pathprefix) option.
-
-> [!NOTE]  
-> If you are using a recent version of node/npm on Windows, you may need to use `npm run build -- -- ...` instead of `npm run build -- ...`, see <https://github.com/npm/cli/issues/7375> for details.
 
 After building, `dist/` will contain all assets necessary
 host the browser. These can be manually copied to your web host of choice.
@@ -128,6 +133,7 @@ The following languages are currently supported:
 - Spanish `es`
 - English `en` (International `en`, US `en-US`, UK `en-GB`)
 - French `fr` (Canada `fr-CA`, France `fr`, Switzerland `fr-CH`)
+- Indonesian `id`
 - Italian `it` (Italy `it`, Switzerland `it-CH`)
 - Romanian `ro`
 - Japanese `ja`
@@ -141,6 +147,8 @@ To add your own language, please follow the guide below: [Adding a new language]
 The following contributors kindly provide the translations:
 
 - [@jfbourgon](https://github.com/jfbourgon): `fr`, `fr-CA`
+- [@jtreska](https://github.com/jtreska): `pl`
+- [@amrirasyidi](https://github.com/amrirasyidi): `id`
 - [@mneagul](https://github.com/mneagul): `ro`
 - [@m-mohr](https://github.com/m-mohr): `de`, `en`, `en-GB`, `en-US`
 - [@p1d1d1](https://github.com/p1d1d1): `de-CH`, `fr-CH`, `it`, `it-CH`
@@ -148,7 +156,6 @@ The following contributors kindly provide the translations:
 - [@randa-11295](https://github.com/randa-11295): `ar`
 - [@rnanclares](https://github.com/rnanclares): `es`
 - [@uba](https://github.com/uba): `pt-BR`
-- [@jtreska](https://github.com/jtreska): `pl`
 
 #### Custom phrases
 
